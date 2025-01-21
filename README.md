@@ -1,7 +1,7 @@
 # Temporal Workflow Sample: Semaphore
 
 ### Overview
-This example demonstrates a time-based semaphore implemented using a Temporal workflow. A semaphore is a synchronization tool that limits the number of processes that can access a shared resource. This workflow runs indefinitely, managing the execution of child workflows. You can send it an update request whenever you want to start a child workflow.
+This example demonstrates a time-windowed semaphore implemented using a Temporal workflow. A semaphore is a synchronization tool that limits the number of processes that can access a shared resource. This workflow runs indefinitely, managing the execution of child workflows. You can send it an update request whenever you want to start a child workflow.
 
 ![Watch the demo](./semaphore-typescript.jpg)
 
