@@ -23,7 +23,7 @@ async function requestChildWorkflow() {
 
   // Use the ID in the update
   const prevValue = await handle.executeUpdate('startChildWorkflow', { args: [id] });
-  console.log('Previous value:', prevValue);
+  console.log('Response:', prevValue);
 }
 
 requestChildWorkflow().catch((err) => {
