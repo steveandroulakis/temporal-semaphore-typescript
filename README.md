@@ -75,6 +75,7 @@ Response: {"response":"QUEUED","queueDepth":2,"childExecutionCount":2}
 ```
 
 ### Future work
+- Possibly no need to use timers in this use case (more efficient to use deterministic Datetime calculations on update?)
 - Turn into Temporal TypeScript SDK sample (and pass PR review)
 - Make the semaphore configurable (e.g., max child workflows)
 - Add a parallel execution option instead of sequential
