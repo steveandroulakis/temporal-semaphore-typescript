@@ -41,9 +41,9 @@ TEMPORAL_API_KEY="your-api-key"
 * Run `npm run requestChildWorkflow -- --id test123` to send an update to the Workflow that starts a child workflow.
 
 ### Example output (configured for max 3 child workflows per minute):
-```
-# First time window
 
+First time window
+```
 # Running npm run requestChildWorkflow -- --id abc123
 
 ## Update request 1
@@ -63,9 +63,10 @@ Response: Rejected child workflow with ID: abc123 - exceeds maximum of 3 child e
 ## Update request 5
 Update returns an error to the client due to max child executions reached (validation failed)
 Response: Rejected child workflow with ID: abc123 - exceeds maximum of 3 child executions
+```
 
-
-# Second time window
+Second time window
+```
 ## Update request 1
 Response: {"response":"EXECUTING","queueDepth":1,"childExecutionCount":1}
 
