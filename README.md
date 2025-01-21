@@ -1,9 +1,9 @@
 # Temporal Workflow Sample: Semaphore
 
 ### Overview
-This example demonstrates a time-windowed semaphore implemented using a Temporal workflow. A semaphore is a synchronization tool that limits the number of processes that can access a shared resource. This workflow runs indefinitely, managing the execution of child workflows. You can send it an update request whenever you want to start a child workflow.
+This example demonstrates a time-windowed semaphore implemented using a Temporal workflow. A semaphore is a synchronization tool that limits the number of processes that can access a shared resource. This workflow runs indefinitely, managing the execution of child workflows. Send workflows Updates to start a child workflow.
 
-![Watch the demo](./semaphore-typescript.jpg)
+![Screenshot](./semaphore-typescript.jpg)
 
 There's a configurable time window (e.g., one minute) where a maximum number of child workflows allowed to execute within that window (default is 3, set in `src/workflows.ts` as `MAX_CHILD_EXECUTIONS`). If you try to start more child workflows than allowed during a time window, the update request will respond with REJECTED. In that case, you'll need to wait until the current time window expires and refreshes before you can kick off additional child workflows. The time window will reset, allowing you to start more workflows when ready. The workflow ensures that child workflows are queued and run sequentially, useful for use cases where you want to limit the number of concurrent processes accessing a shared resource.
 
