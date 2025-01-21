@@ -1,17 +1,10 @@
 import { proxyActivities, defineUpdate, setHandler, executeChild, 
     ParentClosePolicy, sleep, condition } from '@temporalio/workflow';
 
-import type * as activities from '../src/activities';
-
-const { processPayment, reserveInventory, deliverOrder } = proxyActivities<typeof activities>({
-    startToCloseTimeout: '5 seconds',
-    retry: { nonRetryableErrorTypes: ['CreditCardExpiredException'] }
-});
-
 // Define an update that takes a string as an ID
 export const startChildWorkflow = defineUpdate<string, [string]>('startChildWorkflow');
 
-export async function OrderTimeWindowWorkflow(timeWindow: number): Promise<string> {
+export async function SemaphoreWorkflow(timeWindow: number): Promise<string> {
     const MAX_CHILD_EXECUTIONS = 3; // Maximum allowed child workflow executions
     const timeWindowMs = timeWindow * 60 * 1000;
     const workflowQueue: string[] = [];
@@ -21,31 +14,27 @@ export async function OrderTimeWindowWorkflow(timeWindow: number): Promise<strin
     let executingOrQueued = 'EXECUTING';
     let queueDepth = 0;
     
-    console.log(`Running OrderTimeWindowWorkflow with a time window of ${timeWindow} minutes.`);
+    console.log(`Running SemaphoreWorkflow with a time window of ${timeWindow} minutes.`);
+
+    const validator = (id: string) => {
+        if (childExecutionCount >= MAX_CHILD_EXECUTIONS) {
+            throw new Error(`Rejected child workflow with ID: ${id} - exceeds maximum of ${MAX_CHILD_EXECUTIONS} child executions`);
+        }
+    };
 
     // Register the handler for the 'startChildWorkflow' update
     setHandler(startChildWorkflow, async (id: string): Promise<string> => {
-        if (childExecutionCount >= MAX_CHILD_EXECUTIONS) {
-            console.log(`Rejected workflow with ID: ${id} - exceeds maximum of ${MAX_CHILD_EXECUTIONS} child executions`);
-            return JSON.stringify({
-                response: 'REJECTED',
-                queueDepth: childExecutionCount
-            }, null, 0);
-        }
-
-        // console.log(`DEBUG: workflowQueue.length: ${workflowQueue.length}`);
-        // console.log(`DEBUG: executingOrQueued: ${executingOrQueued}`);
         workflowQueue.push(id);
         queueDepth++;
         childExecutionCount++;
         console.log(`Added workflow with ID: ${id} to the queue.`);
         console.log(`Current workflow queue: ${workflowQueue.length} items.`);
         return JSON.stringify({
-            // If queue already had items before pushing, then this one gets queued
             response: executingOrQueued,
-            queueDepth: queueDepth
+            queueDepth: queueDepth,
+            childExecutionCount: childExecutionCount
         }, null, 0);
-    });
+    }, { validator });
 
     // Create initial sleep promise
     let timeoutPromise = sleep(timeWindowMs);
@@ -76,9 +65,9 @@ export async function OrderTimeWindowWorkflow(timeWindow: number): Promise<strin
             console.log(`Processing workflow with ID: ${id}`);
             
             executingOrQueued = 'QUEUED';
-            await executeChild(OrderChild, {
+            await executeChild(SemaphoreChildWorkflow, {
                 args: [id],
-                workflowId: `order-child-${id}`,
+                workflowId: `semaphore-child-${id}`,
                 parentClosePolicy: ParentClosePolicy.PARENT_CLOSE_POLICY_REQUEST_CANCEL
             });
             executingOrQueued = 'EXECUTING';
@@ -92,8 +81,8 @@ export async function OrderTimeWindowWorkflow(timeWindow: number): Promise<strin
 }
 
 // Child workflow definition
-export async function OrderChild(id: string): Promise<void> {
-    console.log(`Running OrderChild workflow with ID: ${id}`);
+export async function SemaphoreChildWorkflow(id: string): Promise<void> {
+    console.log(`Running SemaphoreChildWorkflow workflow with ID: ${id}`);
     await sleep(5000); // Run a timer for 5 seconds
-    console.log(`OrderChild workflow with ID: ${id} completed.`);
+    console.log(`SemaphoreChildWorkflow workflow with ID: ${id} completed.`);
 }

@@ -1,7 +1,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { Env, getEnv } from './interfaces/env';
-import { OrderTimeWindowWorkflow } from './workflows';
+import { SemaphoreWorkflow } from './workflows';
 import { createClientConnection } from './utils/connection';
 
 // Extended Env interface to include API key
@@ -38,9 +38,9 @@ async function run({
     taskQueue
   });
 
-  await client.workflow.execute(OrderTimeWindowWorkflow, {
+  await client.workflow.execute(SemaphoreWorkflow, {
     taskQueue,
-    workflowId: `order-time-window`,
+    workflowId: `semaphore-workflow`,
     args: [timeWindow],
   });
 }

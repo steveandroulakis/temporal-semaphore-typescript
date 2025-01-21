@@ -27,7 +27,7 @@ export function getEnv(): Env {
         clientApiKey: process.env.TEMPORAL_API_KEY,
         serverNameOverride: process.env.TEMPORAL_SERVER_NAME_OVERRIDE,
         serverRootCACertificatePath: process.env.TEMPORAL_SERVER_ROOT_CA_CERT_PATH,
-        taskQueue: process.env.TEMPORAL_TASK_QUEUE || 'sample-order-semaphore',
+        taskQueue: process.env.TEMPORAL_TASK_QUEUE || 'semaphore-task-queue',
     };
 }
 

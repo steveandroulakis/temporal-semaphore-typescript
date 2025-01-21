@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import { Worker, NativeConnection } from '@temporalio/worker';
-import * as activities from './activities';
 import { Env, getEnv } from './interfaces/env';
 
 /**
@@ -65,7 +64,6 @@ async function run({
     namespace,
     workflowsPath: require.resolve('./workflows'),
     taskQueue,
-    activities,
   });
 
   console.log('Worker connection successfully established');

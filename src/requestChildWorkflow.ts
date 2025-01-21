@@ -16,7 +16,7 @@ async function requestChildWorkflow() {
   const id = argv.id;
 
   // Assume the parent workflow ID is known or hard-coded
-  const parentWorkflowId = 'order-time-window';
+  const parentWorkflowId = 'semaphore-workflow';
 
   // Get the handle of the existing parent workflow
   const handle = client.workflow.getHandle(parentWorkflowId);
